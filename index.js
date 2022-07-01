@@ -2,7 +2,7 @@ let div = document.querySelector('.search_div') //search-input
 let input = document.querySelector('.input_search') //input
 let box_li = document.querySelector('.search_box-li') //autocom-box
 let mas = []
-
+let arrayForLi = []
 //дебонс функция для корректного отправления данных на сервер
 function debounce (func, wait, immediate)
 {
@@ -21,6 +21,35 @@ function debounce (func, wait, immediate)
         if (callNow) func.apply(context, args);
     }
 }
+
+
+
+
+//отрисовка DOM элементов
+function clickLi ()
+{
+    let createDiv = document.createElement('div')
+    let createElement
+    // for (let i = 0; i < mas.length; i++)
+    // {
+    //     createElement = '<div class="create-activ">' + '<h3 class="create-activ_h">' + arrayForLi[i][3] + '</h3>' + '<p class="create-activ_p">' + 'id:' + arrayForLi[i][1] + 'stars:' + arrayForLi[i][2] + '</p>' + '</div>'
+    // }
+    arrayForLi.forEach(function (element, i)
+    {
+        //console.log(element[0])
+
+        console.log(mas[i])
+        createElement = '<div class="create-activ">' + '<h3 class="create-activ_h">' + element[3] + '</h3>' + '<p class="create-activ_p">' + 'id:' + element[1] + 'stars:' + element[2] + '</p>' + '</div>'
+
+    })
+
+
+    createDiv.innerHTML = createElement
+    document.body.appendChild(createDiv)
+}
+
+
+
 
 
 input.addEventListener('keyup', debounce(function (e)
@@ -42,22 +71,18 @@ input.addEventListener('keyup', debounce(function (e)
         return response.json()
     }).then(function (posts)
     {
-        let element
         //функциональный перебор элементов полученных с помощью fetch
         return posts.forEach(function (el)
         {
-            element = el.id + ' ' + el.stargazers_count + ' ' + name
             mas.push(el.name)
+            arrayForLi.push([el.name, el.id, el.stargazers_count, name])
             let masLi = mas.map(function (masLi)
             {
-                return masLi = '<li class="li-active">' + masLi + '</li>'
+                return masLi = '<li class="li-active" onclick="clickLi()">' + masLi + '</li>'
             })
+
             showLi(masLi)
-            let liAddDiv = document.querySelector('.li-active')
-
-            console.log(liAddDiv)
         })
-
         //короткая функция написанная для отрисовки названия репозиториев в теге li
         function showLi (list)
         {
@@ -72,5 +97,4 @@ input.addEventListener('keyup', debounce(function (e)
             }
         }
     })
-
 }, 500))
