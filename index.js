@@ -1,6 +1,9 @@
 let div = document.querySelector('.search_div') //search-input
 let input = document.querySelector('.input_search') //input
 let box_li = document.querySelector('.search_box-li') //autocom-box
+let conteiner_createElDiv = document.querySelector('.create-element')
+let createDiv
+let createElement;
 let mas = []
 let arrayForLi = []
 //дебонс функция для корректного отправления данных на сервер
@@ -26,31 +29,49 @@ function debounce (func, wait, immediate)
 
 
 //отрисовка DOM элементов
-function clickLi ()
+function clickLi (e)
 {
-    let createDiv = document.createElement('div')
-    let createElement
-    // for (let i = 0; i < mas.length; i++)
-    // {
-    //     createElement = '<div class="create-activ">' + '<h3 class="create-activ_h">' + arrayForLi[i][3] + '</h3>' + '<p class="create-activ_p">' + 'id:' + arrayForLi[i][1] + 'stars:' + arrayForLi[i][2] + '</p>' + '</div>'
-    // }
-    arrayForLi.forEach(function (element, i)
+    createDiv = document.createElement('div')
+    createElement;
+    createDiv.classList.add('conteiner-activ')
+    for (let i = 0; i < mas.length; i++)
     {
-        //console.log(element[0])
+        //console.log(e.textContent, '==', mas[i], '?', arrayForLi[i]);
+        if (mas[i] == e.textContent)
+        {
+            createElement = '<div class="create-activ">' + '<img class="clear-element" src="img/delete-icon.png" alt="альтернативный текст">' + '<h3 class="create-activ_h">' + arrayForLi[i][3] + '</h3>' + '<p class="create-activ_p">' + 'id:' + arrayForLi[i][1] + " " + 'stars:' + arrayForLi[i][2] + '</p>' + '</div>';
+            break;
+        }
+    }
 
-        console.log(mas[i])
-        createElement = '<div class="create-activ">' + '<h3 class="create-activ_h">' + element[3] + '</h3>' + '<p class="create-activ_p">' + 'id:' + element[1] + 'stars:' + element[2] + '</p>' + '</div>'
-
-    })
-
-
-    createDiv.innerHTML = createElement
-    document.body.appendChild(createDiv)
+    createDiv.innerHTML = createElement;
+    conteiner_createElDiv.appendChild(createDiv);
+    conteiner_createElDiv.addEventListener('click', clearElement)
 }
 
+function clearElement (e)
+{
+    if (e.target.className != "clear-element")
+    {
+        return
+    } else
+    {
+        let clear = e.target.closest('.conteiner-activ')
+        clear.remove()
+    }
+}
 
-
-
+function clearElementLi (e)
+{
+    if (e.target.className != "clear-element")
+    {
+        return
+    } else
+    {
+        let clear = e.target.closest('.li-active')
+        clear.remove()
+    }
+}
 
 input.addEventListener('keyup', debounce(function (e)
 {
@@ -78,10 +99,10 @@ input.addEventListener('keyup', debounce(function (e)
             arrayForLi.push([el.name, el.id, el.stargazers_count, name])
             let masLi = mas.map(function (masLi)
             {
-                return masLi = '<li class="li-active" onclick="clickLi()">' + masLi + '</li>'
+                return masLi = '<li class="li-active" onclick="clickLi(this)">' + masLi + '<img class="clear-element" src="img/delete-icon.png" alt="альтернативный текст">' + '</li>'
             })
-
             showLi(masLi)
+            box_li.addEventListener('click', clearElementLi)
         })
         //короткая функция написанная для отрисовки названия репозиториев в теге li
         function showLi (list)

@@ -55,3 +55,34 @@ body {
 .search_box-li li:hover {
     background: burlywood;
 }
+
+.create-element {
+    display: flex;
+    width: 750px;
+    flex-wrap: wrap;
+    padding: 0;
+}
+
+.conteiner-activ {
+    margin-left: 20px;
+    background-color: darkorange;
+    width: 200px;
+    padding: 8px;
+}
+
+.create-activ_p {
+    font-family: 'Arima', cursive;
+    font-size: 18px;
+}
+
+.create-activ_h {
+    font-family: 'Arima', cursive;
+    font-size: 22px;
+}
+
+.clear-element {
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+    vertical-align: center;
+}
