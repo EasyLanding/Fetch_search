@@ -72,7 +72,7 @@ function clearElementLi (e)
 {
     if (e.target.className != "clear-element")
     {
-        return
+        event.stopPropagation()
     } else
     {
         let clear = e.target.closest('.li-active')
@@ -93,7 +93,7 @@ input.addEventListener('keyup', debounce(function (e)
     //Тут делаем проверки, если name пустой, тогда очищаем массив в который добавляли полученные данные
     //Так же очищаем от списков li страницу
     //Так же удаляем дополнительный класс active чтобы вернуть css стили в прежнее состояние
-    if (name === '')
+    if (name === '' || name.length > 1)
     {
         arrNameRepo.length = 0
         arrAnotherInfoFromFetch.length = 0
