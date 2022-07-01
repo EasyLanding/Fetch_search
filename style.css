@@ -86,3 +86,7 @@ body {
     margin-left: 10px;
     vertical-align: center;
 }
+
+.error-message {
+    opacity: 1;
+}

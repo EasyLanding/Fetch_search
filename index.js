@@ -1,11 +1,15 @@
-let div = document.querySelector('.search_div') //search-input
-let input = document.querySelector('.input_search') //input
-let box_li = document.querySelector('.search_box-li') //autocom-box
-let conteiner_createElDiv = document.querySelector('.create-element')
-let createDiv
-let createElement;
-let mas = []
-let arrayForLi = []
+let div = document.querySelector('.search_div') //div в котором хранится инпут с которым работаем
+let input = document.querySelector('.input_search') //input с которым работаем
+let conteinerForLi = document.querySelector('.search_box-li') //контейнер для li элементов в которые выводим значения
+let conteiner_createElDiv = document.querySelector('.create-element')// переменная контейнер для отрисовки div по клику
+
+
+let createDiv// вспомогательная переменная для отрисовки дом элемента
+let createElement; // вспомогательная перменная для отрисовки дом элемента
+let arrNameRepo = [] //массив в котором храним названия репозиториев полученных с помощью fetch
+let arrAnotherInfoFromFetch = [] //другие данные полученные с помощью fetch(колличество звезд, имя пользователя и тд)
+
+
 //дебонс функция для корректного отправления данных на сервер
 function debounce (func, wait, immediate)
 {
@@ -34,12 +38,11 @@ function clickLi (e)
     createDiv = document.createElement('div')
     createElement;
     createDiv.classList.add('conteiner-activ')
-    for (let i = 0; i < mas.length; i++)
+    for (let i = 0; i < arrNameRepo.length; i++)
     {
-        //console.log(e.textContent, '==', mas[i], '?', arrayForLi[i]);
-        if (mas[i] == e.textContent)
+        if (arrNameRepo[i] == e.textContent)
         {
-            createElement = '<div class="create-activ">' + '<img class="clear-element" src="img/delete-icon.png" alt="альтернативный текст">' + '<h3 class="create-activ_h">' + arrayForLi[i][3] + '</h3>' + '<p class="create-activ_p">' + 'id:' + arrayForLi[i][1] + " " + 'stars:' + arrayForLi[i][2] + '</p>' + '</div>';
+            createElement = '<div class="create-activ">' + '<img class="clear-element" src="img/delete-icon.png" alt="альтернативный текст">' + '<h3 class="create-activ_h">' + arrAnotherInfoFromFetch[i][3] + '</h3>' + '<p class="create-activ_p">' + 'id:' + arrAnotherInfoFromFetch[i][1] + " " + 'stars:' + arrAnotherInfoFromFetch[i][2] + '</p>' + '</div>';
             break;
         }
     }
@@ -49,6 +52,8 @@ function clickLi (e)
     conteiner_createElDiv.addEventListener('click', clearElement)
 }
 
+
+//Очищение div дом элементов которые отрисовали
 function clearElement (e)
 {
     if (e.target.className != "clear-element")
@@ -61,6 +66,8 @@ function clearElement (e)
     }
 }
 
+
+//реализация удаления элементов Li
 function clearElementLi (e)
 {
     if (e.target.className != "clear-element")
@@ -73,19 +80,27 @@ function clearElementLi (e)
     }
 }
 
+
+
+
+
+
+//Основная функция которая спрабатывает при начале ввода что то в инпут
 input.addEventListener('keyup', debounce(function (e)
 {
     //передаем в переменную name значение инпута, так мы делаем запрос по никнейму пользователя
     name = e.target.value
-    //Тут делаем проверки, если name пустой то есть инпут пустой, тогда очищаем массив в который добавляли полученные данные
+    //Тут делаем проверки, если name пустой, тогда очищаем массив в который добавляли полученные данные
     //Так же очищаем от списков li страницу
     //Так же удаляем дополнительный класс active чтобы вернуть css стили в прежнее состояние
     if (name === '')
     {
-        mas.length = 0
-        box_li.innerHTML = ''
-        box_li.classList.remove('active')
+        arrNameRepo.length = 0
+        arrAnotherInfoFromFetch.length = 0
+        conteinerForLi.innerHTML = ''
+        conteinerForLi.classList.remove('active')
     }
+
     //Запрос на сервер по гитхаб апи происходит с помощью переменной name где name является ником пользователя
     let info = fetch(`https://api.github.com/users/${name}/repos`).then(function (response)
     {
@@ -95,15 +110,18 @@ input.addEventListener('keyup', debounce(function (e)
         //функциональный перебор элементов полученных с помощью fetch
         return posts.forEach(function (el)
         {
-            mas.push(el.name)
-            arrayForLi.push([el.name, el.id, el.stargazers_count, name])
-            let masLi = mas.map(function (masLi)
+
+            arrNameRepo.push(el.name)
+            arrAnotherInfoFromFetch.push([el.name, el.id, el.stargazers_count, name])
+            let arrNameRepos = arrNameRepo.map(function (arrNameRepos)
             {
-                return masLi = '<li class="li-active" onclick="clickLi(this)">' + masLi + '<img class="clear-element" src="img/delete-icon.png" alt="альтернативный текст">' + '</li>'
+                return arrNameRepos = '<li class="li-active" onclick="clickLi(this)">' + arrNameRepos + '<img class="clear-element" src="img/delete-icon.png" alt="альтернативный текст">' + '</li>'
             })
-            showLi(masLi)
-            box_li.addEventListener('click', clearElementLi)
+            showLi(arrNameRepos)
+            conteinerForLi.addEventListener('click', clearElementLi)
         })
+
+
         //короткая функция написанная для отрисовки названия репозиториев в теге li
         function showLi (list)
         {
@@ -111,11 +129,15 @@ input.addEventListener('keyup', debounce(function (e)
 
             listArray = list.join('')
 
-            box_li.innerHTML = listArray
+            conteinerForLi.innerHTML = listArray
             if (list)
             {
-                box_li.classList.add('active')
+                conteinerForLi.classList.add('active')
             }
         }
+    }).catch(error =>
+    {
+        error = 'Вы ввели не верное имя пользователя или произошла ошибка, пожалуйста очистите поисковую строку и повторите запрос'
+        throw new Error(error)
     })
 }, 500))
