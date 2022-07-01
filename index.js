@@ -72,7 +72,7 @@ function clearElementLi (e)
 {
     if (e.target.className != "clear-element")
     {
-        event.stopPropagation()
+        return
     } else
     {
         let clear = e.target.closest('.li-active')
